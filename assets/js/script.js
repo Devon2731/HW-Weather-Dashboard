@@ -7,7 +7,7 @@ let searchForm = $("#search-form");
 let searchHistoryContainer = $("#history");
 let forecastContainer = $("#forecast");
 let todayContainer = $("#today")
-
+// Looping the Search Hisory
 function renderSearchHistory() {
     searchHistoryContainer.html("")
 
@@ -31,7 +31,7 @@ function appendSearchHistory(search) {
     localStorage.setItem("search-history", JSON.stringify(searchHistory));
     renderSearchHistory()
 }
-
+//function to prepare for Geo coding 
 function renderCurrentWeather(city, weatherData){
     let date = moment().format("M/D/YYYY")
     let tempC = weatherData["main"]["temp"];
@@ -83,7 +83,7 @@ function renderForecast(weatherData){
     let headingCol =$("<div>");
     let heading = $("<h4>");
 
-
+//Setting up current weather header data
     headingCol.attr("class", "col-12");
     heading.text("5-day forecast");
     headingCol.append(heading);
@@ -140,7 +140,7 @@ function renderForecast(weatherData){
 
 
 }
-
+// functiom to get weather data using Lat and LON
 function fetchWeather(location){
     let latitude = location.lat;
     let longitude = location.lon;
@@ -178,7 +178,7 @@ function fetchCoord(search) {
         }
     });
 }
-
+//function to store recent searches in localStorage
 function initializeHistory(){
     let storedHistory = localStorage.getItem("search-history");
 
@@ -207,7 +207,7 @@ function clickSearchHistory(event){
 }
 
 
-
+//Handling the click events 
 initializeHistory()
 searchForm.on("submit", submitSearchForm);
 searchHistoryContainer.on("click", clickSearchHistory)
