@@ -1,155 +1,259 @@
-/* Recent Weather */
-$(document).ready(function() {
-	const MAX_RECENT_CITIES = 10;
-	const localStorageKey = 'recentCities';
-	const apiKey = 'c87120f4f0057256f6ae9f36ae2b9c6d';
-	const recentCities = JSON.parse(localStorage.getItem(localStorageKey)) || [];
-	populateRecentCities(recentCities);
-	$('#search-form').submit(function(event) {
-		event.preventDefault();
-		const city = $('#city-input').val();
-		console.log(city);
-		fetchWeather(city);
-		if (!$('#city-list li:contains(' + city + ')').length) {
-			updateRecentCities(city);
-			if ($('#city-list li').length > MAX_RECENT_CITIES) {
-				$('#city-list li:last-child').remove();
-			}
-		}
-		updateLocalStorage(city, recentCities);
-	});
-	$('#city-list').on('click', 'li', function() {
-		const city = $(this).text();
-		fetchWeather(city);
-	});
-	$('#clear-recent').click(function() {
-		$('#city-list').empty();
-		$(this).hide();
-		localStorage.removeItem(localStorageKey);
-	});
+var inputSearch = document.getElementById("searchCity");
+var searchSubmitButtonEl = document.getElementById("submitButton");
+var recentCityEl = document.getElementById("recentCitySearches");
+var inputFormEl = document.getElementById("inputForm");
+var resultsPEl = document.getElementById("resultsPage")
+var recentCitiesInStorage = localStorage.getItem("5DQV-Cities");
+var recentsButtonElList = document.querySelectorAll(".recentCitiesButton");
 
-	function updateLocalStorage(city, recentCities) {
-		if (!recentCities.includes(city)) {
-			recentCities.unshift(city);
-			if (recentCities.length > MAX_RECENT_CITIES) {
-				recentCities.pop();
-			}
-			localStorage.setItem(localStorageKey, JSON.stringify(recentCities));
-		}
-	}
+// handle event when city is searched for in input field
+var searchSubmitHandler = function () {
 
-	function populateRecentCities(recentCities) {
-		const $cityList = $('#city-list');
-		recentCities.forEach(city => {
-			const $cityItem = $('<li>').text(city).addClass('clickable');
-			$cityList.append($cityItem);
-		});
-		const $clearButton = $('#clear-recent');
-		if (recentCities.length > 0) {
-			$clearButton.show();
-		} else {
-			$clearButton.hide();
-		}
-	}
+  if (inputSearch.value) {
 
-	function updateRecentCities(city) {
-		const $cityList = $('#city-list');
-		const $newCityItem = $('<li>').text(city);
-		$cityList.prepend($newCityItem);
-		$('#clear-recent').show();
-	}
-	/* Current Weather */
-	function fetchWeather(city) {
-		const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`;
-		$.ajax({
-			url: apiUrl,
-			method: 'GET',
-			dataType: 'json',
-			success: function(data) {
-				const cityName = data.city.name;
-				const currentWeather = data.list[0];
-				const temperature = currentWeather.main.temp;
-				const humidity = currentWeather.main.humidity;
-				const windSpeed = currentWeather.wind.speed;
-				const weatherIcon = currentWeather.weather[0].icon;
-				const iconUrl = `http://openweathermap.org/img/w/${weatherIcon}.png`;
-				const currentDate = new Date(currentWeather.dt * 1000).toLocaleDateString();
-				const weatherDetails = `
-          <h3>${cityName}</h3>
-          <p>Date: ${currentDate}</p>
-          <p>Temperature: ${temperature}°F</p>
-          <p>Humidity: ${humidity}%</p>
-          <p>Wind Speed: ${windSpeed} m/s</p>
-          <img src="${iconUrl}" alt="Weather Icon">
-        `;
-				$('#weather-details').html(weatherDetails);
-				fetchForecast(city); // Call fetchForecast here
-			},
-			error: function(error) {
-				console.error('Error fetching weather data:', error);
-			}
-		});
-	}
-	/* 5 day Forcast */
-	function fetchForecast(city) {
-		const forecastApiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
-		$.ajax({
-			url: forecastApiUrl,
-			method: 'GET',
-			dataType: 'json',
-			success: function(data) {
-                const forecastList = data.list.slice(0, 5); // Take only the first 5 forecasts
-                let forecastHtml = '';
-                
-                forecastList.forEach(forecast => {
-                  const forecastDate = new Date(forecast.dt * 1000).toLocaleDateString(undefined, {
-                    weekday: 'short',
-                    month: 'short',
-                    day: 'numeric'
-                  });
-                  const forecastTemperature = forecast.main.temp;
-                  const forecastWeatherIcon = forecast.weather[0].icon;
-                  const forecastDescription = forecast.weather[0].description;
-                  const iconUrl = `http://openweathermap.org/img/w/${forecastWeatherIcon}.png`;
-                
-                  forecastHtml += `
-                    <div class="forecast-item">
-                      <p class="mb-0">${forecastDate}</p>
-                      <img src="${iconUrl}" alt="Forecast Icon">
-                      <p class="mb-0">${forecastDescription}</p>
-                      <p class="mb-0">${forecastTemperature}°F</p>
-                    </div>
-                  `;
-                });
-                
-                $('#forecast-details').html(forecastHtml);
-			},
-			error: function(error) {
-				console.error('Error fetching forecast data:', error);
-			}
-		});
-	}
-});
-// Function to update the current time and date
-function updateCurrentTimeAndDate() {
-	const now = new Date();
-	const timeOptions = {
-		hour: 'numeric',
-		minute: '2-digit',
-		hour12: true
-	};
-	const dateOptions = {
-		year: 'numeric',
-		month: 'long',
-		day: 'numeric'
-	};
-	const currentTime = now.toLocaleTimeString('en-US', timeOptions);
-	const currentDate = now.toLocaleDateString('en-US', dateOptions);
-	const currentTimeDate = `
-    <p class="mb-0">${currentTime}</p>
-    <p class="mb-0">${currentDate}</p>
-  `;
-	$('#time-date-details').html(currentTimeDate);
+    getWeatherData(inputSearch.value);
+
+  } else {
+
+    console.log("null");
+
+  }
 }
-updateCurrentTimeAndDate();
-setInterval(updateCurrentTimeAndDate, 1000);
+// handle event when recent cities is clicked
+var recentsClickHandler = function (citySelected) {
+
+  getWeatherData(citySelected);
+
+};
+// create search query and connect with api
+var getWeatherData = function (cityName) {
+
+  var lat = 0;
+  var lon = 0;
+  var city = "";
+
+  // convert city to coordinates by
+  // making an api call to openweathermap's
+  // geocoder api
+
+  var apiGeo = "https://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=5&appid=3e223c6a3be5d2c61635bc63dad25fdf";
+  
+  // get coordinates of city searched from input field
+  fetch(apiGeo)
+    .then(function (response) {
+      if (response.ok) {
+        response.json().then(function (data) {
+
+          // capture cities coordinates
+          var cityLon = data[0].lon;
+          var cityLat = data[0].lat;
+
+          var apiURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + cityLat + "&lon=" + cityLon + "&appid=3e223c6a3be5d2c61635bc63dad25fdf&units=imperial";
+          
+          // get weather data for city using coordinates just obtained
+          fetch(apiURL)
+            .then(function (response) {
+              if (response.ok) {
+                response.json().then(function (weatherData) {
+
+                  // create today's date
+                  var todayDateObj = new Date;
+                  var todayDate = "(" + todayDateObj.getMonth() + "/" + todayDateObj.getDate() + "/" + todayDateObj.getFullYear() + ")";
+
+                  // add weather information to the current weather up top
+                  createWeatherCard(weatherData, todayDate);
+
+                  // save or refresh searched city in localStorage
+                  saveCityToRecentSearches(cityName);
+
+                  // get 5-day forecast
+                  var apiURL5Day = "https://api.openweathermap.org/data/2.5/forecast?cnt=121&lat="+ cityLat + "&lon=" + cityLon + "&appid=3e223c6a3be5d2c61635bc63dad25fdf&units=imperial";
+
+                  fetch(apiURL5Day)
+
+                    .then(function (response) {
+
+                      if (response.ok) {
+
+                        response.json().then(function (weatherForecastData) {
+                          
+                          
+                          document.getElementById("fiveDayViewTitle").textContent = "5-Day Forecast:"
+                          for (var i=1; i<6; i++) {
+
+                            // weather data gives updates every 3 hours, so 
+                            // 1 day is 24hours/3hours = 8
+                            var nextDay = 8*i;
+
+                            // render 5 day weather (1 day at a time in this loop)
+                            create5DayWeatherCard(weatherForecastData.list[nextDay-1], i);
+
+                          }
+
+                        })
+
+                      } else {
+
+                        alert("bad response: "+response.statusText);
+
+                      }
+
+                    });
+
+                });
+              } else {
+                alert('Error: ' + response.statusText);
+              }
+            })
+            .catch(function (error) {
+              alert('Unable to connect to OpenWeatherMap');
+            });
+
+        });
+      } else {
+        alert('Error: ' + response.statusText);
+      }
+    })
+    .catch(function (error) {
+      alert('Unable to connect to OpenWeatherMap');
+    });
+};
+// for rendering current weather up top
+var createWeatherCard = function (weatherData, forDate) {
+
+  // resolve the icon
+  var weatherIconHref = "https://openweathermap.org/img/wn/" + weatherData.weather[0].icon + "@2x.png";
+
+  document.getElementById("currentCityNameDateIcon").textContent = weatherData.name + " " + forDate + " ";
+
+  var weatherIcon = document.createElement("img");
+  weatherIcon.setAttribute("class", "weatherIcon");
+  weatherIcon.setAttribute("alt", "weather icon");
+  weatherIcon.setAttribute("src", weatherIconHref);
+
+  document.getElementById("currentCityNameDateIcon").appendChild(weatherIcon);
+  document.getElementById("currentCityTemp").textContent = "Temp: " + weatherData.main.temp + " ºF";
+  document.getElementById("currentCityWind").textContent = "Wind: " + weatherData.wind.speed + " MPH";
+  document.getElementById("currentCityHumidity").textContent = "Humidity: " + weatherData.main.humidity + " %";
+
+}
+// for saving or refreshing city searched to the localStorage
+var saveCityToRecentSearches = function (cityName) {
+
+  var recentsArray = localStorage.getItem("5DQV-Cities");
+
+  if (recentsArray) {
+
+    // recents has cities saved already
+    recentsArray = JSON.parse(recentsArray);
+
+    if (recentsArray.indexOf(cityName) >= 0) {
+      // recents has this particular city
+      // and indexOfCity has array index
+
+      // remove cityName element from the array
+      recentsArray = recentsArray.toSpliced(recentsArray.indexOf(cityName), 1);
+
+      // add cityName to the beginning of the array
+      recentsArray.unshift(cityName);
+
+    } else {
+
+      // recents does not have this city in it
+      // so save it to the top position in recents
+      recentsArray.unshift(cityName);
+      // set max limit of recent cities storage to 8
+      while (recentsArray.length>8) {
+        recentsArray.pop();
+      };
+    }
+
+  } else {
+
+    // no recent cities found in localstorage,
+    // so save one
+    recentsArray = [cityName];
+
+  }
+
+  // save to localStorage
+  localStorage.setItem("5DQV-Cities", JSON.stringify(recentsArray));
+
+  // update the recent cities display
+  displayRecents(recentsArray);
+
+};
+// for displaying recent cities on the page
+var displayRecents = function (recentsArrayToDisplay) {
+
+  var recentsContainer = document.getElementById("recentCitySearches");
+  recentsContainer.innerHTML = "";
+
+  for (var i = 0; i < recentsArrayToDisplay.length; i++) {
+
+    // display recent cities
+    var buttonEl = document.createElement("button");
+    buttonEl.setAttribute("class", "recentCitiesButton");
+    buttonEl.setAttribute("type", "button");
+    buttonEl.setAttribute("name", recentsArrayToDisplay[i]);
+    buttonEl.setAttribute("value", recentsArrayToDisplay[i]);
+    buttonEl.textContent = recentsArrayToDisplay[i];
+
+    recentsContainer.appendChild(buttonEl);
+
+  }
+}
+// for displaying forecast for one day
+// forecastDay is a value between 1 and 5
+// forecastDataArray is forecast data for 1 day
+var create5DayWeatherCard = function (forecastDataArray, forecastDay) {
+
+  // console.log(forecastDataArray);
+
+  // resolve the icon
+  var weatherIconHref = "https://openweathermap.org/img/wn/" + forecastDataArray.weather[0].icon + "@2x.png";
+
+  // create Id for HTML elements to get
+  var divIdOfCard = "Day"+forecastDay+"Weather";
+  var pOfNameDate = divIdOfCard+"NameDate";
+  var pOfIcon = divIdOfCard+"Icon";
+  var pOfTemp = divIdOfCard+"Temp";
+  var pOfWind = divIdOfCard+"Wind";
+  var pOfHumidity = divIdOfCard+"Humidity";
+
+  var weatherIcon = document.createElement("img");
+
+  weatherIcon.setAttribute("class", "weatherIcon");
+  weatherIcon.setAttribute("alt", "weather icon");
+  weatherIcon.setAttribute("src", weatherIconHref);
+
+  document.getElementById(pOfNameDate).textContent = forecastDataArray.dt_txt.slice(5,7)+"/"+forecastDataArray.dt_txt.slice(8,10)+"/"+forecastDataArray.dt_txt.slice(0,4);
+  document.getElementById(pOfIcon).innerHTML="";
+  document.getElementById(pOfIcon).appendChild(weatherIcon);
+  document.getElementById(pOfTemp).textContent = "Temp: " + forecastDataArray.main.temp + " ºF";
+  document.getElementById(pOfWind).textContent = "Wind: " + forecastDataArray.wind.speed + " MPH";
+  document.getElementById(pOfHumidity).textContent = "Humidity: " + forecastDataArray.main.humidity + " %";
+
+}
+// when page loads, print recent cities from localStorage
+if (recentCitiesInStorage) {
+  displayRecents(JSON.parse(recentCitiesInStorage));
+}
+// this is kicked off if the submit button is clicked
+searchSubmitButtonEl.addEventListener('click', searchSubmitHandler);
+// this is kicked off when one of the recent cities is clicked
+recentCityEl.addEventListener('click', function (event) {
+
+  event.preventDefault;
+  // console.log(event.target);
+
+  // //if button.name is one of the cities
+  // if (event.target.name === "berlin"){
+  // }
+
+  if (recentCitiesInStorage.indexOf(event.target.name) >= 0) {
+    // a city was clicked from history
+    recentsClickHandler(event.target.name);
+  }
+
+});
