@@ -1,62 +1,110 @@
 <!DOCTYPE html>
-<html lang="en-gb">
+<html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <!-- <link rel="stylesheet" href="styles/reset.css" /> -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Roboto&family=Rubik:ital@1&display=swap" rel="stylesheet">
-  <title>Weather Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,400i,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <link rel="stylesheet" href="./assets/css/reset.css" />
+
+    <title>5DayQuickView</title>
 </head>
 
-
-
 <body>
-  <header class="container-fluid text-center text-white bg-dark p-2 weather-header">
-    <h1>Weather Dashboard</h1>
-  </header>
 
-  <!-- max-width for ultra wide resolutions -->
-  <div class="container-fluid" style="max-width: 1400px">
-    <div class="row">
-      <aside class="col-lg-3 pb-3">
-        <h2 id="form-heading" class="mt-1 h3 form-label">
-          Search for a City:
-        </h2>
-        <form id="search-form" class="form">
-          <div class="form-inline form-group">
-            <div class="input-group">
-              <input class="form-input weather-search" type="text" id="search-input" placeholder="City"
-                aria-labelledby="form-heading" aria-controls="today forecast" />
-              <div class="input-group-append">
-                <button type="submit" class="btn search-button custom-btn" id="search-button" aria-label="submit search">
-                  Search
-                </button>
-                <hr class="hr weather-hr" />
-              </div>
+    <!-- header goes here -->
+
+    <header>
+        <p>Weather Dashboard</p>
+    </header>
+
+    <!-- left panel with
+    - search box and button
+    - and results history
+     -->
+     <section id="main-body">
+
+        <!-- search options show here -->
+        <div id="panel-left">
+
+            <!-- form goes here -->
+            <div id="inputForm">
+    
+                <!-- text input field to capture a search query -->
+                <label for="searchCity">Search for a City:</label>
+                <input type="text" id="searchCity" name="searchCity">
+    
+                <!-- a button to submit form -->
+                <button type="submit" id="submitButton">Search</button>
+    
             </div>
-          </div>
-        </form>
-        <div class="list-group" id="history"></div>
-      </aside>
+            <div id="recentCitySearches">
+                <!-- this section to be used via javaScript - do not add html here -->
+                <!-- add any recently searched city names here for quick select -->
+                <!-- <p>City names will show up here</p> -->
+            </div>
+    
+        </div>
 
-      <div class="col-lg-9 pb-3">
-        <section id="today" class="mt-3" role="region" aria-live="polite"></section>
-        <section id="forecast" class="row mt-3" role="region" aria-live="polite"></section>
-      </div>
-    </div>
-  </div>
+        <!-- search results show Header -->
+        <div id="panel-main">
 
-  <!-- Moment.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-  <!-- jQuery -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="assets/js/script.js"></script>
+            <div id="currentCityWeather">
+                <h1 id="currentCityNameDateIcon"></h1>
+                <p id="currentCityTemp"></p>
+                <p id="currentCityWind"></p>
+                <p id="currentCityHumidity"></p>
+            </div>
+            <div id="fiveDayView">
+                <h1 id="fiveDayViewTitle"></h1>
+                <div id="Day1Weather" class="forecastCard">
+                    <h2 id="Day1WeatherNameDate"></h2>
+                    <p id="Day1WeatherIcon"></p>
+                    <p id="Day1WeatherTemp"></p>
+                    <p id="Day1WeatherWind"></p>
+                    <p id="Day1WeatherHumidity"></p>
+                </div>
+                <div id="Day2Weather" class="forecastCard">
+                    <h2 id="Day2WeatherNameDate"></h2>
+                    <p id="Day2WeatherIcon"></p>
+                    <p id="Day2WeatherTemp"></p>
+                    <p id="Day2WeatherWind"></p>
+                    <p id="Day2WeatherHumidity"></p>
+                </div>
+                <div id="Day3Weather" class="forecastCard">
+                    <h2 id="Day3WeatherNameDate"></h2>
+                    <p id="Day3WeatherIcon"></p>
+                    <p id="Day3WeatherTemp"></p>
+                    <p id="Day3WeatherWind"></p>
+                    <p id="Day3WeatherHumidity"></p>
+                </div>
+                <div id="Day4Weather" class="forecastCard">
+                    <h2 id="Day4WeatherNameDate"></h2>
+                    <p id="Day4WeatherIcon"></p>
+                    <p id="Day4WeatherTemp"></p>
+                    <p id="Day4WeatherWind"></p>
+                    <p id="Day4WeatherHumidity"></p>
+                </div>
+                <div id="Day5Weather" class="forecastCard">
+                    <h2 id="Day5WeatherNameDate"></h2>
+                    <p id="Day5WeatherIcon"></p>
+                    <p id="Day5WeatherTemp"></p>
+                    <p id="Day5WeatherWind"></p>
+                    <p id="Day5WeatherHumidity"></p>
+                </div>
+            </div>
+            
+
+        </div>
+     </section>
+    
+   
+
+
+    <script src="./assets/js/script.js"></script>
+
 </body>
 
 </html>
