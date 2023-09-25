@@ -9,3 +9,4 @@ This weather dashboard application uses [OpenWeather API](https://openweathermap
 <img width="1440" alt="Screenshot 2023-09-25 at 3 56 39 PM" src="https://github.com/Devon2731/HW-Weather-Dashboard/assets/141438012/7e33fdb0-aac5-4d03-9c11-8ed7e37a38f9">
 
 ### Deploy
+Github: https://github.com/Devon2731/HW-Weather-Dashboard
